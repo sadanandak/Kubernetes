@@ -1,87 +1,98 @@
 ![image](https://github.com/user-attachments/assets/9e7db6e9-9d88-4316-8c2a-0a6806514220)
 
 
-Generate SSH Keys: These keys will be used by KOPS and applied to all servers.
 
+
+**Generate SSH Keys:**
+These keys will be used by KOPS and applied to all servers.
+
+```sh
 ssh-keygen 
+```
 
+---
 
-Smoke Testing:
+**Smoke Testing:**
 
-Get Nodes:
+1. **Get Nodes:**
+   ```sh
+   kubectl get nodes
+   ```
+   
+2. **Get Nodes (No Headers):**
+   ```sh
+   kubectl get nodes --no-headers
+   ```
 
-kubectl get nodes
+3. **Cluster Info:**
+   ```sh
+   kubectl cluster-info
+   ```
 
-Get Nodes (No Headers):
+4. **Get Namespaces:**
+   ```sh
+   kubectl get ns
+   ```
+   Example namespaces: Alpha, Bravo, Charlie.
 
-kubectl get nodes --no-headers
+*Note:* If three teams are working on three different projects but using the same cluster, we can isolate with Namespaces. To allow communication between them, use Network Policies.
 
-Cluster Info:
+---
 
-kubectl cluster-info
+**Pods Information:**
 
-Get Namespaces:
+1. **Get Pods (Default Namespace):**
+   ```sh
+   kubectl get pods
+   ```
+   Output: "Nothing is there" (if no pods are running)
 
-kubectl get ns
+2. **Get Pods (Kube-System Namespace):**
+   ```sh
+   kubectl get pods -n kube-system
+   ```
 
-Example namespaces: Alpha, Bravo, Charlie.
+3. **Get Pods (Kube-System Namespace, Detailed):**
+   ```sh
+   kubectl get pods -n kube-system -o wide | grep -i <component-name>
+   ```
+   Replace `<component-name>` with the specific component you're looking for.
 
-Note: If three teams are working on three different projects but using the same cluster, we can isolate with Namespaces. To allow communication between them, use Network Policies.
+---
 
+**Deploy Resources in Kubernetes:**
 
-Pods Information:
+1. **Imperative Approach:**
+   ```sh
+   kubectl run testpod1 --image=nginx:latest --dry-run=client -o yaml
+   ```
+   *Note:* This generates the YAML manifest without creating the pod.
 
-Get Pods (Default Namespace):
+2. **Declarative Approach (Using YAML or JSON):**
+   Create a file `pod.yaml` with the following content:
+   ```yaml
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: testpod1
+   spec:
+     containers:
+     - name: nginx
+       image: nginx:latest
+   ```
+   Apply the manifest:
+   ```sh
+   kubectl apply -f pod.yaml
+   ```
 
-kubectl get pods
+3. **Run Pod Directly:**
+   ```sh
+   kubectl run testpod1 --image=nginx:latest
+   ```
 
-Output: "Nothing is there" (if no pods are running)
+4. **Get Pods:**
+   ```sh
+   kubectl get pods
+   ```
 
-Get Pods (Kube-System Namespace):
-
-kubectl get pods -n kube-system
-
-Get Pods (Kube-System Namespace, Detailed):
-
-kubectl get pods -n kube-system -o wide | grep -i <component-name>
-
-Replace <component-name> with the specific component you're looking for.
-
-
-Deploy Resources in Kubernetes:
-
-Imperative Approach:
-
-kubectl run testpod1 --image=nginx:latest --dry-run=client -o yaml
-
-Note: This generates the YAML manifest without creating the pod.
-
-Declarative Approach (Using YAML or JSON): Create a file pod.yaml with the following content:
-
-apiVersion: v1
-
-kind: Pod
-
-metadata:
-
-  name: testpod1
-  
-spec:
-
-  containers:
-  
-  - name: nginx
-    
-    image: nginx:latest
-    
-Apply the manifest:
-
-kubectl apply -f pod.yaml
-
-Run Pod Directly:
-
-kubectl run testpod1 --image=nginx:latest
-
-Get Pods:
-
-kubectl get pods
+---
